@@ -1,0 +1,80 @@
+[
+  {
+    "id": "discordplus-link-gate-dashboard",
+    "component": "discordplus/dist/link-widget.html",
+    "enabled": true,
+    "priority": 100,
+    "page": "dashboard",
+    "location": "top-of-page",
+    "pluginName": "DiscordPlus",
+    "title": null,
+    "description": null,
+    "size": "full",
+    "borderless": true,
+    "useRawRendering": true,
+    "card": {
+      "enabled": false
+    },
+    "iframe": {
+      "minHeight": "96px",
+      "title": "Discord account linking",
+      "ariaLabel": "Discord account linking widget"
+    },
+    "behavior": {
+      "loadingMessage": "Checking Discord link status…"
+    }
+  },
+  {
+    "id": "discordplus-link-gate-account",
+    "component": "discordplus/dist/link-widget.html",
+    "enabled": true,
+    "priority": 100,
+    "page": "dashboard-account",
+    "location": "top-of-page",
+    "pluginName": "DiscordPlus",
+    "title": null,
+    "description": null,
+    "size": "full",
+    "borderless": true,
+    "useRawRendering": true,
+    "card": {
+      "enabled": false
+    },
+    "iframe": {
+      "minHeight": "96px",
+      "title": "Discord account linking",
+      "ariaLabel": "Discord account linking widget"
+    },
+    "behavior": {
+      "loadingMessage": "Checking Discord link status…"
+    }
+  },
+  {
+    "id": "discordplus-admin-user-edit",
+    "component": "discordplus/dist/admin-user-widget.html",
+    "enabled": true,
+    "priority": 90,
+    "page": "admin-users-edit",
+    "location": "after-header",
+    "pluginName": "DiscordPlus",
+    "title": "Discord",
+    "description": "Linked Discord account for this user",
+    "icon": "DC",
+    "size": "full",
+    "card": {
+      "enabled": true,
+      "padding": "sm",
+      "header": {
+        "show": true
+      }
+    },
+    "iframe": {
+      "minHeight": "60px",
+      "title": "Discord account",
+      "ariaLabel": "Discord account for this user"
+    },
+    "behavior": {
+      "loadingMessage": "Loading Discord…"
+    }
+  }
+]

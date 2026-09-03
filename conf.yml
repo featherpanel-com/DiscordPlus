@@ -1,0 +1,46 @@
+plugin:
+  name: DiscordPlus
+  identifier: discordplus
+  description: "Search users by Discord ID and optionally require Discord account linking before panel use."
+  flags:
+    - hasEvents
+    - hasInstallScript
+    - hasRemovalScript
+    - hasUpdateScript
+  version: 1.0.0
+  target: v2
+  author:
+    - FeatherPanel
+  icon: "https://cdn.discordapp.com/embed/avatars/0.png"
+  requiredConfigs: []
+  dependencies:
+    - php-ext=pdo
+config:
+  - name: require_discord_link
+    display_name: "Require Discord link"
+    type: boolean
+    description: "When enabled, users must link their Discord account before they can use the panel (except linking and session endpoints)."
+    required: false
+    validation: {}
+    default: "false"
+  - name: allow_admin_bypass
+    display_name: "Allow admin bypass"
+    type: boolean
+    description: "Admins (admin.root or /api/admin routes) can use the panel without linking Discord."
+    required: false
+    validation: {}
+    default: "true"
+  - name: block_api_keys
+    display_name: "Also block API keys"
+    type: boolean
+    description: "When require Discord link is on, also block Bearer API key requests from unlinked users."
+    required: false
+    validation: {}
+    default: "true"
+  - name: gate_message
+    display_name: "Gate message"
+    type: text
+    description: "Message shown to users who must link Discord before continuing."
+    required: false
+    validation: {}
+    default: "Link your Discord account to continue using this panel."

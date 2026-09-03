@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Discord</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --text: #e2e8f0;
+      --muted: #94a3b8;
+      --border: rgba(148, 163, 184, 0.18);
+      --ok: #4ade80;
+      --bad: #f87171;
+      --accent: #5865f2;
+    }
+    html.light {
+      color-scheme: light;
+      --text: #0f172a;
+      --muted: #64748b;
+      --border: rgba(15, 23, 42, 0.12);
+    }
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      background: transparent;
+      color: var(--text);
+      font: 14px/1.45 ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    [hidden] { display: none !important; }
+    .box { padding: 0.15rem 0; }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 0.75rem 1rem;
+    }
+    .label {
+      color: var(--muted);
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+      margin-bottom: 0.2rem;
+    }
+    .value { font-size: 0.875rem; word-break: break-all; }
+    .ok { color: var(--ok); }
+    .bad { color: var(--bad); }
+    code {
+      font: 0.8rem/1.3 ui-monospace, SFMono-Regular, Menlo, monospace;
+      color: var(--muted);
+    }
+    .msg {
+      color: var(--muted);
+      font-size: 0.8125rem;
+      padding: 0.25rem 0;
+    }
+    .msg.err { color: var(--bad); }
+    .actions { margin-top: 0.75rem; }
+    a {
+      color: var(--accent);
+      text-decoration: none;
+      font-size: 0.8125rem;
+      font-weight: 500;
+    }
+    a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <div class="msg" id="status">Loading…</div>
+    <div id="content" hidden>
+      <div class="grid">
+        <div>
+          <div class="label">Status</div>
+          <div class="value" id="linked">—</div>
+        </div>
+        <div>
+          <div class="label">Username</div>
+          <div class="value" id="username">—</div>
+        </div>
+        <div>
+          <div class="label">Display name</div>
+          <div class="value" id="name">—</div>
+        </div>
+        <div>
+          <div class="label">Discord ID</div>
+          <div class="value"><code id="discord-id">—</code></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function applyTheme(theme) {
+      document.documentElement.classList.toggle('light', theme === 'light');
+      document.documentElement.classList.toggle('dark', theme !== 'light');
+    }
+
+    function params() {
+      return new URLSearchParams(window.location.search);
+    }
+
+    function userId() {
+      const p = params();
+      return p.get('id') || p.get('uuid') || p.get('userUuid') || '';
+    }
+
+    async function load() {
+      const status = document.getElementById('status');
+      const content = document.getElementById('content');
+      const id = userId();
+
+      if (!id || id === 'notAuthenticated' || id === 'testData') {
+        status.className = 'msg err';
+        status.textContent = 'No user id in page context.';
+        return;
+      }
+
+      try {
+        const res = await fetch('/api/admin/discordplus/users/' + encodeURIComponent(id), {
+          credentials: 'include',
+          headers: { Accept: 'application/json' },
+        });
+        const json = await res.json();
+        if (!res.ok || !json.success) {
+          throw new Error(json.message || 'Failed to load');
+        }
+
+        const u = json.data.user;
+        const linked = !!u.discord_linked;
+        document.getElementById('linked').innerHTML = linked
+          ? '<span class="ok">Linked</span>'
+          : '<span class="bad">Not linked</span>';
+        document.getElementById('username').textContent = u.discord_oauth2_username || '—';
+        document.getElementById('name').textContent = u.discord_oauth2_name || '—';
+        document.getElementById('discord-id').textContent = u.discord_oauth2_id || '—';
+
+
+        status.hidden = true;
+        content.hidden = false;
+      } catch (e) {
+        status.className = 'msg err';
+        status.textContent = e.message || 'Failed to load Discord data';
+      }
+    }
+
+    window.addEventListener('message', (event) => {
+      if (event.data && event.data.type === 'featherpanel-theme') {
+        applyTheme(event.data.theme);
+      }
+    });
+
+    applyTheme(params().get('__theme') === 'light' ? 'light' : 'dark');
+    window.parent.postMessage({ type: 'featherpanel-ready' }, '*');
+    load();
+  </script>
+</body>
+</html>

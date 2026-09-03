@@ -1,0 +1,16 @@
+{
+  "client": {},
+  "admin": {
+    "/discordplus": {
+      "name": "Discord Plus",
+      "lucideIcon": "search",
+      "showBadge": false,
+      "redirect": "/discordplus",
+      "component": "/discordplus/dist/admin.html",
+      "description": "Search users by Discord ID or username",
+      "category": "admin",
+      "group": "Users"
+    }
+  },
+  "server": {}
+}

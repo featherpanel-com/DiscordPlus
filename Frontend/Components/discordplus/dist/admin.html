@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Discord Plus</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --text: #e2e8f0;
+      --muted: #94a3b8;
+      --border: rgba(148, 163, 184, 0.18);
+      --panel: rgba(15, 23, 42, 0.55);
+      --input: rgba(2, 6, 23, 0.45);
+      --accent: #5865f2;
+      --ok: #4ade80;
+      --bad: #f87171;
+      --row-hover: rgba(148, 163, 184, 0.06);
+    }
+    html.light {
+      color-scheme: light;
+      --text: #0f172a;
+      --muted: #64748b;
+      --border: rgba(15, 23, 42, 0.12);
+      --panel: rgba(255, 255, 255, 0.75);
+      --input: rgba(255, 255, 255, 0.9);
+      --row-hover: rgba(15, 23, 42, 0.04);
+    }
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      min-height: 100%;
+      background: transparent;
+      color: var(--text);
+      font: 14px/1.45 ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    body { padding: 1rem 1.25rem 2rem; }
+    [hidden] { display: none !important; }
+
+    .page { max-width: 1100px; margin: 0 auto; }
+
+    .head {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 0.75rem 1rem;
+      margin-bottom: 1rem;
+    }
+    .head h1 {
+      margin: 0;
+      font-size: 1.25rem;
+      font-weight: 600;
+    }
+    .head p {
+      margin: 0.2rem 0 0;
+      color: var(--muted);
+      font-size: 0.8125rem;
+    }
+    .flags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem 0.85rem;
+      color: var(--muted);
+      font-size: 0.75rem;
+    }
+    .flags b { font-weight: 600; color: var(--text); }
+    .ok { color: var(--ok); }
+    .bad { color: var(--bad); }
+
+    .panel {
+      border: 1px solid var(--border);
+      border-radius: 0.5rem;
+      background: var(--panel);
+      overflow: hidden;
+    }
+    .panel + .panel { margin-top: 0.75rem; }
+
+    .search {
+      display: flex;
+      gap: 0.5rem;
+      padding: 0.75rem;
+    }
+    .search input {
+      flex: 1;
+      min-width: 0;
+      height: 2.25rem;
+      padding: 0 0.75rem;
+      border: 1px solid var(--border);
+      border-radius: 0.375rem;
+      background: var(--input);
+      color: var(--text);
+      font: inherit;
+      outline: none;
+    }
+    .search input:focus { border-color: var(--accent); }
+    .search button {
+      height: 2.25rem;
+      padding: 0 0.9rem;
+      border: 0;
+      border-radius: 0.375rem;
+      background: var(--accent);
+      color: #fff;
+      font: inherit;
+      font-weight: 500;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .search button:disabled { opacity: 0.55; cursor: wait; }
+
+    .status {
+      padding: 0 0.75rem 0.75rem;
+      color: var(--muted);
+      font-size: 0.8125rem;
+    }
+    .status.err { color: var(--bad); }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    th, td {
+      padding: 0.7rem 0.75rem;
+      border-top: 1px solid var(--border);
+      text-align: left;
+      vertical-align: middle;
+    }
+    th {
+      color: var(--muted);
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+      background: transparent;
+    }
+    tbody tr:hover { background: var(--row-hover); }
+    .user {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      min-width: 0;
+    }
+    .avatar {
+      width: 2rem;
+      height: 2rem;
+      border-radius: 999px;
+      object-fit: cover;
+      background: var(--border);
+      flex-shrink: 0;
+    }
+    .name { font-weight: 600; }
+    .email, .muted {
+      color: var(--muted);
+      font-size: 0.75rem;
+    }
+    code {
+      font: 0.75rem/1.3 ui-monospace, SFMono-Regular, Menlo, monospace;
+      color: var(--muted);
+    }
+    .role {
+      display: inline-block;
+      padding: 0.1rem 0.45rem;
+      border: 1px solid var(--border);
+      border-radius: 0.25rem;
+      font-size: 0.75rem;
+    }
+    a.action {
+      color: var(--accent);
+      text-decoration: none;
+      font-size: 0.8125rem;
+      font-weight: 500;
+    }
+    a.action:hover { text-decoration: underline; }
+    .empty {
+      padding: 1.5rem 0.75rem;
+      color: var(--muted);
+      font-size: 0.8125rem;
+      text-align: center;
+    }
+
+    @media (max-width: 720px) {
+      .hide-sm { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="head">
+      <div>
+        <h1>Discord Plus</h1>
+        <p>Find panel users by Discord ID or username.</p>
+      </div>
+      <div class="flags" id="flags">
+        <span>Require link: <b id="s-require">—</b></span>
+        <span>Admin bypass: <b id="s-bypass">—</b></span>
+        <span>OAuth: <b id="s-oauth">—</b></span>
+      </div>
+    </div>
+
+    <div class="panel">
+      <form class="search" id="form">
+        <input id="q" type="search" placeholder="Discord ID or username" autocomplete="off" autofocus />
+        <button type="submit" id="btn">Search</button>
+      </form>
+      <div class="status" id="status">Type a Discord ID or username and hit Search.</div>
+    </div>
+
+    <div class="panel" id="results-panel" hidden>
+      <table>
+        <thead>
+          <tr>
+            <th>User</th>
+            <th>Discord</th>
+            <th class="hide-sm">Discord ID</th>
+            <th>Role</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="results"></tbody>
+      </table>
+      <div class="empty" id="empty" hidden>No users found.</div>
+    </div>
+  </div>
+
+  <script>
+    function on(v) {
+      return v ? '<span class="ok">on</span>' : '<span class="bad">off</span>';
+    }
+
+    function esc(v) {
+      return String(v)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    async function get(url) {
+      const res = await fetch(url, {
+        credentials: 'include',
+        headers: { Accept: 'application/json' },
+      });
+      const json = await res.json();
+      if (!res.ok || !json.success) {
+        throw new Error(json.message || json.error_message || 'Request failed');
+      }
+      return json.data;
+    }
+
+    async function loadSettings() {
+      try {
+        const d = await get('/api/admin/discordplus/settings');
+        document.getElementById('s-require').innerHTML = on(!!d.require_discord_link);
+        document.getElementById('s-bypass').innerHTML = on(!!d.allow_admin_bypass);
+        document.getElementById('s-oauth').innerHTML = on(!!d.discord_oauth_enabled);
+      } catch (_) {}
+    }
+
+    function render(users) {
+      const panel = document.getElementById('results-panel');
+      const tbody = document.getElementById('results');
+      const empty = document.getElementById('empty');
+      tbody.innerHTML = '';
+      panel.hidden = false;
+      empty.hidden = users.length > 0;
+
+      for (const u of users) {
+        const tr = document.createElement('tr');
+        const discordName = u.discord_oauth2_username || u.discord_oauth2_name || '—';
+        const discordId = u.discord_oauth2_id || '—';
+        const role = (u.role && u.role.display_name) || '—';
+        const roleColor = (u.role && u.role.color) || '';
+        const avatar = u.avatar
+          ? `<img class="avatar" src="${esc(u.avatar)}" alt="" />`
+          : `<div class="avatar"></div>`;
+
+        tr.innerHTML = `
+          <td>
+            <div class="user">
+              ${avatar}
+              <div>
+                <div class="name">${esc(u.username || '')}</div>
+                <div class="email">${esc(u.email || '')}</div>
+              </div>
+            </div>
+          </td>
+          <td>${esc(discordName)}</td>
+          <td class="hide-sm"><code>${esc(String(discordId))}</code></td>
+          <td><span class="role" style="${roleColor ? `border-color:${esc(roleColor)};color:${esc(roleColor)}` : ''}">${esc(role)}</span></td>
+          <td><a class="action" href="/admin/users/${encodeURIComponent(u.uuid)}/edit" target="_parent">Edit</a></td>
+        `;
+        tbody.appendChild(tr);
+      }
+    }
+
+    document.getElementById('form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const q = document.getElementById('q').value.trim();
+      const status = document.getElementById('status');
+      const btn = document.getElementById('btn');
+      if (!q) return;
+
+      btn.disabled = true;
+      status.className = 'status';
+      status.textContent = 'Searching…';
+
+      try {
+        const data = await get('/api/admin/discordplus/users?q=' + encodeURIComponent(q));
+        const users = data.users || [];
+        render(users);
+        status.textContent = users.length + ' result' + (users.length === 1 ? '' : 's');
+      } catch (err) {
+        render([]);
+        status.className = 'status err';
+        status.textContent = err.message || 'Search failed';
+      } finally {
+        btn.disabled = false;
+      }
+    });
+
+    window.addEventListener('message', (event) => {
+      if (event.data && event.data.type === 'featherpanel-theme') {
+        document.documentElement.classList.toggle('light', event.data.theme === 'light');
+        document.documentElement.classList.toggle('dark', event.data.theme !== 'light');
+      }
+    });
+
+    const theme = new URLSearchParams(window.location.search).get('__theme');
+    document.documentElement.classList.toggle('light', theme === 'light');
+    document.documentElement.classList.toggle('dark', theme !== 'light');
+    window.parent.postMessage({ type: 'featherpanel-ready' }, '*');
+    loadSettings();
+  </script>
+</body>
+</html>
