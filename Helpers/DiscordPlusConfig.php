@@ -19,9 +19,9 @@ namespace App\Addons\discordplus\Helpers;
 
 use App\App;
 use App\Permissions;
-use App\Helpers\PermissionHelper;
 use App\Config\ConfigInterface;
 use App\Plugins\PluginSettings;
+use App\Helpers\PermissionHelper;
 use App\Addons\discordplus\DiscordPlus;
 
 class DiscordPlusConfig

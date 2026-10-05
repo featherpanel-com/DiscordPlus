@@ -8,18 +8,18 @@
     :root {
       color-scheme: dark;
       --ink: #f8fafc;
-      --muted: #94a3b8;
-      --line: rgba(255, 255, 255, 0.1);
-      --panel: hsl(220 15% 9% / 0.85);
+      --muted: #cbd5e1;
+      --line: rgba(255, 255, 255, 0.12);
+      --panel: hsl(220 16% 12% / 0.92);
       --primary: #5865f2;
       --ok: #34d399;
     }
     html.light {
       color-scheme: light;
       --ink: #0f172a;
-      --muted: #64748b;
+      --muted: #475569;
       --line: rgba(15, 23, 42, 0.12);
-      --panel: rgba(255, 255, 255, 0.9);
+      --panel: rgba(255, 255, 255, 0.94);
     }
     * { box-sizing: border-box; }
     html, body {
@@ -41,7 +41,10 @@
       padding: 1rem 1.15rem;
       border: 1px solid var(--line);
       border-radius: 0.75rem;
-      background: var(--panel);
+      background: var(--panel) !important;
+      background-color: var(--panel) !important;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
       box-shadow: none;
       filter: none;
     }
@@ -128,7 +131,8 @@
       border-radius: 0.75rem;
       padding: 1rem;
       font-size: 0.8125rem;
-      background: var(--panel);
+      background: var(--panel) !important;
+      background-color: var(--panel) !important;
       box-shadow: none;
     }
   </style>

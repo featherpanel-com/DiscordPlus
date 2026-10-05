@@ -16,7 +16,7 @@
       "enabled": false
     },
     "iframe": {
-      "minHeight": "96px",
+      "minHeight": "88px",
       "title": "Discord account linking",
       "ariaLabel": "Discord account linking widget"
     },
@@ -41,7 +41,7 @@
       "enabled": false
     },
     "iframe": {
-      "minHeight": "96px",
+      "minHeight": "88px",
       "title": "Discord account linking",
       "ariaLabel": "Discord account linking widget"
     },

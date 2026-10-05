@@ -20,8 +20,8 @@ use App\Permissions;
 use App\Helpers\ApiResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\RouteCollection;
-use App\Addons\discordplus\Controllers\Admin\DiscordPlusController as AdminController;
 use App\Addons\discordplus\Controllers\User\DiscordPlusController as UserController;
+use App\Addons\discordplus\Controllers\Admin\DiscordPlusController as AdminController;
 
 return function (RouteCollection $routes): void {
     App::getInstance(true)->registerAuthRoute(

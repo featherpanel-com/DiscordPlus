@@ -21,8 +21,8 @@ use App\Helpers\ApiResponse;
 use App\Middleware\AuthMiddleware;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use App\Addons\discordplus\Helpers\DiscordUserSearch;
 use App\Addons\discordplus\Helpers\DiscordPlusConfig;
+use App\Addons\discordplus\Helpers\DiscordUserSearch;
 
 class DiscordPlusController
 {
